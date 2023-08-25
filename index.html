@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Blog</title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+    <div class="fluid-container">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-md-5 p-3">
+        <a class="navbar-brand" href="#" style="font-size: 22px">Blog</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">PHP</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">JavaScript</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">NodeJS</a>
+            </li>
+          </ul>
+          <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" style="font-size: 14px" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+          </form>
+        </div>
+      </nav> <!--End nav-->
+
+      <section id="main" class="mx-5">
+        <h2 class="my-3">All Posts</h2>
+        <div class="row my-4 single-post">
+          <img class="col col-lg-4 col-md-12" src="./img/php.png" alt="Image">
+          <div class="media-body col col-lg-8 col-md-12">
+            <h5 class="mt-0"><a href="#">Should I learn PHP in 2019? </a></h5>
+            <span class="posted"><a href="categories.html" class="category">PHP</a> Posted by John at 12, SEP 2019</span>
+            <p>
+              Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+            </p>
+            <span><a href="#" class="d-block">See more &rarr;</a></span>
+          </div>
+        </div>
+        <div class="row my-4 single-post">
+          <img class="col col-lg-4 col-md-12" src="./img/nodejs.png" alt="Image">
+          <div class="col col-lg-8 col-md-12">
+            <h5 class="mt-0"><a href="#">Is NodeJS killing PHP?</a></h5>
+            <span class="posted"><a href="categories.html" class="category">Laravel</a> Posted by John at 12, SEP 2019</span>
+            <p>
+              Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+            </p>
+            <span><a href="#" class="d-block">See more &rarr;</a></span>
+          </div>
+        </div>
+        <div class="row my-4 single-post">
+          <img class="col col-lg-4 col-md-12" src="./img/jquery.png" alt="Image">
+          <div class="col col-lg-8 col-md-12">
+            <h5 class="mt-0"><a href="#">Is jQuery still worth learning?</a></h5>
+            <span class="posted"><a href="categories.html" class="category">NOdeJS</a> Posted by John at 12, SEP 2019</span>
+            <p>
+              Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+            </p>
+            <span><a href="#" class="">See more &rarr;</a></span>
+          </div>
+        </div>
+      </section>
+
+      <ul class="pagination px-5">
+        <li class="page-item disabled">
+          <a class="page-link" href="#" tabindex="-1">Previous</a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item active">
+          <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item">
+          <a class="page-link" href="#">Next</a>
+        </li>
+      </ul>
+
+      <footer class="px-lg-5 py-3 bg-light d-flex justify-content-center">
+        <span>Copyright &copy; All Right Reserved</span>
+      </footer>
+
+    </div>
+
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
+</body>
+</html>
