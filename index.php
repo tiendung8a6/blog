@@ -7,39 +7,44 @@
 
   <section id="main" class="mx-5">
     <h2 class="my-3">All Posts</h2>
-    <div class="row my-4 single-post">
-      <img class="col col-lg-4 col-md-12" src="./img/php.png" alt="Image">
-      <div class="media-body col col-lg-8 col-md-12">
-        <h5 class="mt-0"><a href="#">Should I learn PHP in 2019? </a></h5>
-        <span class="posted"><a href="categories.html" class="category">PHP</a> Posted by John at 12, SEP 2019</span>
-        <p>
-          Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-        </p>
-        <span><a href="#" class="d-block">See more &rarr;</a></span>
+    <?php
+    $sql = "SELECT * FROM posts";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    while ($post = $stmt->fetch(PDO::FETCH_ASSOC)) {
+      $post_id = $post['post_id'];
+      $post_title = $post['post_title'];
+      $post_des = substr($post['post_des'], 0, 300);
+      $post_image = $post['post_image'];
+      $post_date = $post['post_date'];
+      $post_author = $post['post_author'];
+      $post_cat_id = $post['post_cat_id'];
+      $post_status = $post['post_status']; ?>
+
+      <div class="row my-4 single-post">
+        <img class="col col-lg-4 col-md-12" src="./img/<?php echo $post_image; ?>" alt="Image-<?php echo $post_image; ?>">
+        <div class="media-body col col-lg-8 col-md-12">
+          <h5 class="mt-0"><a href="single.php?id=<?php echo $post_id; ?>"><?php echo $post_title; ?></a></h5>
+          <span class="posted"><a href="http://localhost:8080/blog/categories.php?id=<?php echo $post_cat_id; ?>" class="category">
+              <?php
+              $sql1 = "SELECT * FROM categories WHERE cat_id = :id";
+              $stmt1 = $pdo->prepare($sql1);
+              $stmt1->execute([':id' => $post_cat_id]);
+              while ($cat = $stmt1->fetch(PDO::FETCH_ASSOC)) {
+                $cat_title = $cat['cat_title'];
+              }
+              echo $cat_title;
+              ?>
+            </a> Posted by <?php echo $post_author; ?> at <?php echo $post_date; ?></span>
+          <p>
+            <?php echo $post_des; ?>
+          </p>
+          <span><a href="single.php?id=<?php echo $post_id; ?>" class="d-block">See more &rarr;</a></span>
+        </div>
       </div>
-    </div>
-    <div class="row my-4 single-post">
-      <img class="col col-lg-4 col-md-12" src="./img/nodejs.png" alt="Image">
-      <div class="col col-lg-8 col-md-12">
-        <h5 class="mt-0"><a href="#">Is NodeJS killing PHP?</a></h5>
-        <span class="posted"><a href="categories.html" class="category">Laravel</a> Posted by John at 12, SEP 2019</span>
-        <p>
-          Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-        </p>
-        <span><a href="#" class="d-block">See more &rarr;</a></span>
-      </div>
-    </div>
-    <div class="row my-4 single-post">
-      <img class="col col-lg-4 col-md-12" src="./img/jquery.png" alt="Image">
-      <div class="col col-lg-8 col-md-12">
-        <h5 class="mt-0"><a href="#">Is jQuery still worth learning?</a></h5>
-        <span class="posted"><a href="categories.html" class="category">NOdeJS</a> Posted by John at 12, SEP 2019</span>
-        <p>
-          Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-        </p>
-        <span><a href="#" class="">See more &rarr;</a></span>
-      </div>
-    </div>
+    <?php }
+    ?>
+
   </section>
 
   <ul class="pagination px-5">
