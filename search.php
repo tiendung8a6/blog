@@ -11,19 +11,40 @@
     $url = 'http://localhost:8080/blog/search.php?key=' . $key;
     header("Location: {$url}");
   }
+
+  $post_per_page = 4;
+  $status = "Published";
+  $sql1 = "SELECT * FROM posts WHERE post_title LIKE :p_title AND post_status = :status";
+  $stmt1 = $pdo->prepare($sql1);
+  $stmt1->execute([
+    ':p_title' => '%' . $_GET['key'] . '%',
+    ':status' => $status
+  ]);
+  $post_count = $stmt1->rowCount();
+  if (isset($_GET['page'])) {
+    $page = $_GET['page'];
+    if ($page == 1) {
+      $page_id = 0;
+    } else {
+      $page_id = ($post_per_page * $page) - $post_per_page;
+    }
+  } else {
+    $page_id = 0;
+    $page = 1;
+  }
+  $total_pager = ceil($post_count / $post_per_page);
   ?>
 
   <section id="main" class="mx-5">
     <h2 class="my-3">Search Result for: <?php echo isset($_GET['key']) ? $_GET['key'] : '' ?></h2>
     <?php
     $status = "Published";
-    $sql = "SELECT * FROM posts WHERE post_status = :status AND post_title LIKE :title ";
+    $sql = "SELECT * FROM posts WHERE post_status = :status AND post_title LIKE :title LIMIT $page_id, $post_per_page";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
       ':status' => $status,
       ':title' => '%' . $_GET['key'] . '%'
     ]);
-
     $count = $stmt->rowCount();
     if ($count == 0) {
       echo "<div class='alert alert-danger'>No post found!</div>";
@@ -63,19 +84,48 @@
     ?>
   </section>
 
-
-  <!-- <ul class="pagination px-5">
-    <li class="page-item disabled">
-      <a class="page-link" href="#" tabindex="-1">Previous</a>
-    </li>
-    <li class="page-item"><a class="page-link" href="#">1</a></li>
-    <li class="page-item active">
-      <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
-    </li>
-    <li class="page-item"><a class="page-link" href="#">3</a></li>
-    <li class="page-item">
-      <a class="page-link" href="#">Next</a>
-    </li>
-  </ul> -->
+  <?php
+  if ($post_count > $post_per_page) { ?>
+    <ul class="pagination px-5">
+      <?php
+      if (isset($_GET['page'])) {
+        $prev = $_GET['page'] - 1;
+      } else {
+        $prev = 0;
+      }
+      if ($prev + 1 <= 1) {
+        echo '<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Previous</a></li>';
+      } else {
+        echo '<li class="page-item"><a class="page-link" href="search.php?key=' . $_GET['key'] . '&page=' . $prev . '" tabindex="-1">Previous</a></li>';
+      }
+      ?>
+      <?php
+      if (isset($_GET['page'])) {
+        $active = $_GET['page'];
+      } else {
+        $active = 1;
+      }
+      for ($i = 1; $i <= $total_pager; $i++) {
+        if ($i == $active) {
+          echo '<li class="page-item active"><a class="page-link" href="search.php?key=' . $_GET['key'] . '&page=' . $i . '">' . $i . '</a></li>';
+        } else {
+          echo '<li class="page-item"><a class="page-link" href="search.php?key=' . $_GET['key'] . '&page=' . $i . '">' . $i . '</a></li>';
+        }
+      }
+      ?>
+      <?php
+      if (isset($_GET['page'])) {
+        $next = $_GET['page'] + 1;
+      } else {
+        $next = 2;
+      }
+      if ($next - 1 >= $total_pager) {
+        echo '<li class="page-item disabled"><a class="page-link" href="#">Next</a></li>';
+      } else {
+        echo '<li class="page-item"><a class="page-link" href="search.php?key=' . $_GET['key'] . '&page=' . $next . '">Next</a></li>';
+      }
+      ?>
+    </ul>
+  <?php } ?>
 
   <?php require_once("./includes/footer.php"); ?>
