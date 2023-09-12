@@ -1,55 +1,118 @@
 <?php require_once('./includes/header.php'); ?>
 <?php
-  if(!isset($_COOKIE['_ua_'])){
+if (!isset($_COOKIE['_ua_'])) {
     header("Location: sign-in.php");
-  }
+}
+?>
+
+<?php
+if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+    header("Location: index.php");
+}
+
+if (isset($_POST['val'])) {
+    $pid = $_POST['val'];
+    $sql = "SELECT * FROM posts WHERE post_id = :pid";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        ':pid' => $pid
+    ]);
+    while ($post = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $post_id = $post['post_id'];
+        $post_title = $post['post_title'];
+        $post_cat_id = $post['post_cat_id'];
+        $post_status = $post['post_status'];
+        $post_image = $post['post_image'];
+        $post_content = $post['post_des'];
+    }
+}
 ?>
 <div class="fluid-container">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-md-5">
-        <a class="navbar-brand" href="#">Admin</a>
-        <ul class="navbar-nav d-flex flex-row">
-            <li class="nav-item mr-2 active">
-                <a class="nav-link" href="#">Posts</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Categories</a>
-            </li>
-        </ul>
-    </nav> <!--End nav-->
+    <?php require_once('./includes/navigation.php'); ?>
 
     <section id="main" class="mx-lg-5 mx-md-2 mx-sm-2 pt-3">
         <h2 class="pb-3">Edit Post</h2>
-        <form>
+        <?php
+        if (isset($_POST['update-post'])) {
+            $post_title = $_POST['post-title'];
+            $post_cat_id = $_POST['cat-id'];
+            $post_status = $_POST['post-status'];
+            $post_content = $_POST['post-content'];
+            $postid = $_POST['edit-post-id'];
+            $post_date = date('j F Y');
+            $post_author = "mdabarik";
+            $post_image = $_FILES['post-image']['name'];
+            $post_temp_image = $_FILES['post-image']['tmp_name'];
+            move_uploaded_file("{$post_temp_image}", "../img/{$post_image}");
+            if (empty($post_image)) {
+                $sql3 = "SELECT * FROM posts WHERE post_id = :id";
+                $stmt3 = $pdo->prepare($sql3);
+                $stmt3->execute([
+                    ':id' => $postid
+                ]);
+                while ($p = $stmt3->fetch(PDO::FETCH_ASSOC)) {
+                    $post_image = $p['post_image'];
+                };
+            }
+
+            if (empty($post_title) || empty($post_cat_id) || empty($post_status) || empty($post_content)) {
+                echo "<div class='alert alert-danger'>Field can't be empty!</div>";
+            } else {
+                echo "Hello !";
+                $sql = "UPDATE posts SET post_title = :title, post_des = :post, post_image = :image, post_date = :date, post_author = :author, post_cat_id = :catid, post_status = :status WHERE post_id = :postid";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute([
+                    ':title' => $post_title,
+                    ':post' => $post_content,
+                    ':image' => $post_image,
+                    ':date' => $post_date,
+                    ':author' => $post_author,
+                    ':catid' => $post_cat_id,
+                    ':status' => $post_status,
+                    ':postid' => $postid
+                ]);
+                header("Location: index.php");
+            }
+        }
+        ?>
+        <form method="POST" action="edit-post.php" enctype="multipart/form-data">
             <div class="form-group">
+                <input type="hidden" value="<?php echo $post_id; ?>"" name=" edit-post-id" />
                 <label for="post-title">Post Title</label>
-                <input type="email" class="form-control" id="post-title" placeholder="Enter post title">
+                <input name="post-title" value="<?php echo $post_title; ?>" type="text" class="form-control" id="post-title" placeholder="Enter post title">
             </div>
             <div class="form-group">
                 <label for="category">Select Category</label>
-                <select class="form-control" id="category">
-                    <option>PHP</option>
-                    <option>JavaScript</option>
-                    <option>NodeJS</option>
-                    <option>AngularJS</option>
-                    <option>ReactJS</option>
+                <select name="cat-id" class="form-control" id="category">
+                    <?php
+                    $sql1 = 'SELECT * FROM categories';
+                    $stmt1 = $pdo->prepare($sql1);
+                    $stmt1->execute();
+                    while ($category = $stmt1->fetch(PDO::FETCH_ASSOC)) {
+                        $cat_id = $category['cat_id'];
+                        $cat_title = $category['cat_title']; ?>
+                        echo "<option value="<?php echo $cat_id; ?>" <?php echo $cat_id == $post_cat_id ? 'selected' : '' ?>><?php echo $cat_title; ?></option>";
+                    <?php }
+                    ?>
                 </select>
             </div>
             <div class="form-group">
                 <label for="category">Post Status</label>
-                <select class="form-control" id="category">
-                    <option>Publish</option>
-                    <option>Draft</option>
+                <select name="post-status" class="form-control" id="category">
+                    <option <?php echo $post_status == 'Published' ? 'selected' : '' ?>>Published</option>
+                    <option <?php echo $post_status == 'Draft' ? 'selected' : '' ?>>Draft</option>
                 </select>
             </div>
             <div class="form-group">
+                <img src="../img/<?php echo $post_image; ?>" style="width:50px;height:50px" />
                 <label for="post-image">Upload post image</label>
-                <input type="file" class="form-control-file" id="post-image">
+                <input name="post-image" type="file" class="form-control-file" id="post-image">
             </div>
             <div class="form-group">
                 <label for="post-content">Post Content</label>
-                <textarea class="form-control" id="post-content" rows="6" placeholder="Your post content"></textarea>
+                <textarea name="post-content" class="form-control" id="post-content" rows="6" cols="30" placeholder="Your post content"><?php echo $post_content; ?></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <input name="update-post" type="submit" class="btn btn-primary" value="Update post">
         </form>
     </section>
 

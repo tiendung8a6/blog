@@ -1,23 +1,11 @@
 <?php require_once('./includes/header.php'); ?>
-
 <?php
-  if(!isset($_COOKIE['_ua_'])){
-    header("Location: sign-in.php");
-  }
+if (!isset($_COOKIE['_ua_'])) {
+  header("Location: sign-in.php");
+}
 ?>
-
 <div class="fluid-container">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-md-5">
-    <a class="navbar-brand" href="./index.html">Admin</a>
-    <ul class="navbar-nav d-flex flex-row">
-      <li class="nav-item mr-2 active">
-        <a class="nav-link" href="./index.html">Posts</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="./categories.html">Categories</a>
-      </li>
-    </ul>
-  </nav> <!--End nav-->
+  <?php require_once('./includes/navigation.php'); ?>
 
   <section id="main" class="mx-lg-5 mx-md-2 mx-sm-2">
     <div class="d-flex flex-row justify-content-between">
@@ -35,50 +23,77 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>1</td>
-          <td>John Doe</td>
-          <td>Fine post! Keep posting like so.</td>
-          <td class="d-none d-md-table-cell">
-            <a href="posts.html">Post Title</a>
-          </td>
-          <td>
-            <form action="comments.html" method="POST">
-              <button>Delete</button>
-            </form>
-          </td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>MD. A. Barik + Tamanna Rahman</td>
-          <td>Great post. so much helpful</td>
-          <td class="d-none d-md-table-cell">
-            <a href="posts.html">Post Title</a>
-          </td>
-          <td>
-            <form action="comments.html" method="POST">
-              <button>Delete</button>
-            </form>
-          </td>
-        </tr>
+        <?php
+        $sql = "SELECT * FROM comments WHERE comment_post_id = :id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+          ':id' => $_GET['id']
+        ]);
+        $count = $stmt->rowCount();
+        if ($count == 0) {
+          echo "No comments";
+          exit;
+        }
+        while ($com = $stmt->fetch(PDO::FETCH_ASSOC)) {
+          $c_id = $com['comment_id'];
+          $c_content = $com['comment_des'];
+          $c_author = $com['comment_author']; ?>
+          <tr>
+            <td><?php echo $c_id; ?></td>
+            <td><?php echo $c_author; ?></td>
+            <td><?php echo $c_content; ?></td>
+            <td class="d-none d-md-table-cell">
+              <a href="../single.php?id=<?php echo $_GET['id']; ?>">
+                <?php
+                $sql1 = "SELECT * FROM posts WHERE post_id = :id";
+                $stmt1 = $pdo->prepare($sql1);
+                $stmt1->execute([
+                  ':id' => $_GET['id']
+                ]);
+                while ($post = $stmt1->fetch(PDO::FETCH_ASSOC)) {
+                  $post_title = $post['post_title'];
+                }
+                echo $post_title;
+                ?>
+              </a>
+            </td>
+            <td>
+              <form action="comments.php?id=<?php echo $_GET['id']; ?>" method="POST">
+                <input type="hidden" value="<?php echo $c_id; ?>" name="val" />
+                <input class="btn btn-link" type="submit" value="Delete" name="delete" />
+              </form>
+            </td>
+          </tr>
+        <?php }
+        ?>
+
       </tbody>
     </table>
 
+    <?php
+    if (isset($_POST['delete'])) {
+      $cid = $_POST['val'];
+      echo $cid;
+      // delete the comments in comments table
+      $sql2 = "DELETE FROM comments WHERE comment_id = :id";
+      $stmt2 = $pdo->prepare($sql2);
+      $stmt2->execute(
+        [
+          ':id' => $cid
+        ]
+      );
+      // update post_comment in post table
+      $sql4 = "UPDATE posts SET post_comment = post_comment - 1 WHERE post_id = :pid";
+      $stmt4 = $pdo->prepare($sql4);
+      $stmt4->execute([
+        ':pid' => $_GET['id']
+      ]);
+      header("Location: comments.php?id={$_GET['id']}");
+    }
+    ?>
+
   </section>
 
-  <ul class="pagination px-lg-5">
-    <li class="page-item disabled">
-      <a class="page-link" href="#" tabindex="-1">Previous</a>
-    </li>
-    <li class="page-item"><a class="page-link" href="#">1</a></li>
-    <li class="page-item active">
-      <a class="page-link" href="#">2</a>
-    </li>
-    <li class="page-item"><a class="page-link" href="#">3</a></li>
-    <li class="page-item">
-      <a class="page-link" href="#">Next</a>
-    </li>
-  </ul>
 
 </div>
 

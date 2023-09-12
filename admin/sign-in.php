@@ -31,7 +31,6 @@ if (isset($_COOKIE['_ua_'])) {
         }
     }
     ?>
-
     <form action="sign-in.php" method="POST" class="py-2 d-flex justify-content-center flex-column">
         <div class="form-group m-3">
             <label for="username">Username</label>
