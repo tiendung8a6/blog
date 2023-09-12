@@ -34,15 +34,15 @@ if (isset($_COOKIE['_ua_'])) {
     <form action="sign-in.php" method="POST" class="py-2 d-flex justify-content-center flex-column">
         <div class="form-group m-3">
             <label for="username">Username</label>
-            <input name="user-name" type="text" class="form-control" id="username" placeholder="Enter Username">
+            <input name="user-name" type="text" class="form-control" id="username" placeholder="Enter Username" value="admin">
         </div>
         <div class="form-group m-3">
             <label for="email">Email address</label>
-            <input name="user-email" type="email" class="form-control" id="email" placeholder="Enter Email Address">
+            <input name="user-email" type="email" class="form-control" id="email" placeholder="Enter Email Address" value="admin@gmail.com">
         </div>
         <div class="form-group m-3">
             <label for="password">Password</label>
-            <input name="user-password" type="password" class="form-control" id="password" placeholder="Enter Password">
+            <input name="user-password" type="password" class="form-control" id="password" placeholder="Enter Password" value="123456">
         </div>
         <button name="submit" type="submit" class="btn btn-primary m-3 align-self-end">SIGN IN</button>
     </form>
